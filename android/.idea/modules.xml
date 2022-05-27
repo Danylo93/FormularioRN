@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Formulario.iml" filepath="$PROJECT_DIR$/.idea/modules/Formulario.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Formulario.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Formulario.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Formulario.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Formulario.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Formulario.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Formulario.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Formulario.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Formulario.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/520712967/Formulario.nozbe_watermelondb.iml" filepath="$PROJECT_DIR$/.idea/modules/520712967/Formulario.nozbe_watermelondb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/520712967/Formulario.nozbe_watermelondb.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/520712967/Formulario.nozbe_watermelondb.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/520712967/Formulario.nozbe_watermelondb.main.iml" filepath="$PROJECT_DIR$/.idea/modules/520712967/Formulario.nozbe_watermelondb.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/520712967/Formulario.nozbe_watermelondb.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/520712967/Formulario.nozbe_watermelondb.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/673242655/react-native-gradle-plugin.iml" filepath="$PROJECT_DIR$/.idea/modules/673242655/react-native-gradle-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/673242655/react-native-gradle-plugin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/673242655/react-native-gradle-plugin.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/673242655/react-native-gradle-plugin.test.iml" filepath="$PROJECT_DIR$/.idea/modules/673242655/react-native-gradle-plugin.test.iml" />
+    </modules>
+  </component>
+</project>

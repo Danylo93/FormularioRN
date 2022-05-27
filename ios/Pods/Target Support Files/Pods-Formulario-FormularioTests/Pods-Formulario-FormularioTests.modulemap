@@ -1,0 +1,6 @@
+module Pods_Formulario_FormularioTests {
+  umbrella header "Pods-Formulario-FormularioTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
