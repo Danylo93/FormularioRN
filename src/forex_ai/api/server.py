@@ -4,7 +4,7 @@ import asyncio
 from dataclasses import asdict
 from typing import Optional
 
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -13,6 +13,7 @@ from ..data.streamer import ReplayStreamer
 from ..signals.engine import build_default_engine
 from ..broker.paper import PaperBroker
 from ..screener.runner import screen_pairs
+from .auth import create_jwt, require_auth
 
 
 class SignalOut(BaseModel):
@@ -45,12 +46,16 @@ def make_app(settings: Settings) -> FastAPI:
     def health():
         return {"status": "ok"}
 
+    @app.post("/auth/token")
+    def auth_token(user_id: str = "demo", user_type: int = 1):
+        return {"access_token": create_jwt(user_id=user_id, user_type=user_type)}
+
     @app.get("/equity")
-    def equity():
+    def equity(_: dict = Depends(require_auth)):
         return {"equity": broker.equity}
 
     @app.get("/positions")
-    def positions():
+    def positions(_: dict = Depends(require_auth)):
         return [p.as_dict() for p in broker.positions]
 
     @app.websocket("/ws")
@@ -70,7 +75,7 @@ def make_app(settings: Settings) -> FastAPI:
             broker.on_bar(bar)
 
     @app.get("/screener")
-    def screener(timeframe: str | None = None, rr_min: float = 1.2, align: bool = True, top_n: int = 20):
+    def screener(timeframe: str | None = None, rr_min: float = 1.2, align: bool = True, top_n: int = 20, _: dict = Depends(require_auth)):
         tf = timeframe or settings.timeframe
         opps = screen_pairs(timeframe=tf, rr_min=rr_min, align_m5_m15=align, top_n=top_n)
         return [op.__dict__ for op in opps]
