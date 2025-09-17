@@ -14,6 +14,8 @@ from ..signals.engine import build_default_engine
 from ..broker.paper import PaperBroker
 from ..screener.runner import screen_pairs
 from .auth import create_jwt, require_auth
+from ..news.filter import NewsFilter
+from ..news.tradingeconomics import fetch_te_events
 
 
 class SignalOut(BaseModel):
@@ -41,6 +43,8 @@ def make_app(settings: Settings) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"]
     )
+
+    news_filter_ref: dict[str, NewsFilter | None] = {"nf": None}
 
     @app.get("/health")
     def health():
@@ -74,10 +78,23 @@ def make_app(settings: Settings) -> FastAPI:
             await ws.send_json(payload)
             broker.on_bar(bar)
 
+    @app.post("/news/refresh")
+    def refresh_news(te_api_key: str, countries: str = "USA,EUR,GBR,JPN,CAN,AUS,NZL,CHN", impact: str = "high"):
+        try:
+            countries_list = [c.strip() for c in countries.split(",") if c.strip()]
+            impact_list = [impact.strip().lower()]
+            events = fetch_te_events(api_key=te_api_key, countries=countries_list, impact_levels=impact_list)
+            nf = NewsFilter(events)
+            news_filter_ref["nf"] = nf
+            return {"loaded": len(events)}
+        except Exception as e:
+            return {"error": str(e)}
+
     @app.get("/screener")
-    def screener(timeframe: str | None = None, rr_min: float = 1.2, align: bool = True, top_n: int = 20, _: dict = Depends(require_auth)):
+    def screener(timeframe: str | None = None, rr_min: float = 1.2, align: bool = True, top_n: int = 20, avoid_news: bool = True, _: dict = Depends(require_auth)):
         tf = timeframe or settings.timeframe
-        opps = screen_pairs(timeframe=tf, rr_min=rr_min, align_m5_m15=align, top_n=top_n)
+        nf = news_filter_ref["nf"] if avoid_news else None
+        opps = screen_pairs(timeframe=tf, rr_min=rr_min, align_m5_m15=align, top_n=top_n, news_filter=nf)
         return [op.__dict__ for op in opps]
 
     return app

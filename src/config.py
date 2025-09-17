@@ -24,3 +24,6 @@ class Settings:
     # Backtest
     commission_perc: float = 0.0001  # 1 bps por trade
 
+    # Notícias
+    news_window_minutes: int = 30
+

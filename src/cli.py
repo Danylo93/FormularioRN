@@ -9,6 +9,7 @@ from forex_ai.api.server import run_api
 from forex_ai.screener.runner import screen_pairs
 from forex_ai.news.source import load_news_csv
 from forex_ai.news.filter import NewsFilter
+from forex_ai.news.tradingeconomics import fetch_te_events
 import subprocess
 from forex_ai.data.streamer import ReplayStreamer
 from forex_ai.signals.engine import build_default_engine
@@ -40,6 +41,8 @@ def main():
     p_scr = sub.add_parser("screener", help="Executa screener multi-par")
     p_scr.add_argument("--timeframe", type=parse_timeframe, default="15m")
     p_scr.add_argument("--news_csv", help="Caminho CSV de notícias (opcional)")
+    p_scr.add_argument("--te_key", help="TradingEconomics API key (opcional)")
+    p_scr.add_argument("--avoid_news", action="store_true")
     p_api.add_argument("--symbol", required=True)
     p_api.add_argument("--timeframe", type=parse_timeframe, default="15m")
     p_api.add_argument("--host", default="0.0.0.0")
@@ -88,7 +91,10 @@ def main():
         if getattr(args, "news_csv", None):
             events = load_news_csv(args.news_csv)
             nf = NewsFilter(events)
-        opps = screen_pairs(timeframe=args.timeframe, news_filter=nf)
+        if getattr(args, "te_key", None):
+            te_events = fetch_te_events(args.te_key, countries=["USA", "EUR", "GBR", "JPN", "CAN", "AUS", "NZL", "CHN"], impact_levels=["high"])
+            nf = NewsFilter(te_events)
+        opps = screen_pairs(timeframe=args.timeframe, news_filter=nf if args.avoid_news else None)
         for o in opps[:20]:
             print(o.__dict__)
 

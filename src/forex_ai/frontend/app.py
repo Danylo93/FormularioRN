@@ -43,7 +43,7 @@ if "token" in st.session_state:
 	headers["Authorization"] = f"Bearer {st.session_state['token']}"
 
 # Tabs
-main_tab, trends_tab, corr_tab = st.tabs(["Screener", "Tendência (Heatmap)", "Correlação"])
+main_tab, trends_tab, corr_tab, news_tab = st.tabs(["Screener", "Tendência (Heatmap)", "Correlação", "Notícias (TE)"])
 
 with main_tab:
 	timeframe = st.selectbox("Timeframe", ["5m", "15m"], index=1)
@@ -74,6 +74,7 @@ with main_tab:
 							"rr_min": rr_min,
 							"align": align,
 							"top_n": 20,
+							"avoid_news": True,
 						}
 						resp = requests.get(f"{api_url}/screener", headers=headers, params=params, timeout=30)
 						resp.raise_for_status()
@@ -127,4 +128,19 @@ with corr_tab:
 	correlation_matrix(tf2)
 
 st.markdown("Notas: Faça login para usar a API segura. O screener local não requer token.")
+
+with news_tab:
+	st.subheader("TradingEconomics - Carregar eventos (alta importância)")
+	te_key = st.text_input("TE API Key (user:pass ou chave)")
+	countries = st.text_input("Países (CSV)", value="USA,EUR,GBR,JPN,CAN,AUS,NZL,CHN")
+	if st.button("Atualizar notícias no servidor"):
+		if not headers.get("Authorization"):
+			st.error("Faça login para usar a API")
+		else:
+			try:
+				resp = requests.post(f"{api_url}/news/refresh", headers=headers, params={"te_api_key": te_key, "countries": countries, "impact": "high"}, timeout=45)
+				resp.raise_for_status()
+				st.success(f"Eventos carregados: {resp.json().get('loaded')}")
+			except Exception as e:
+				st.error(f"Erro ao atualizar notícias: {e}")
 
