@@ -8,6 +8,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import requests
+import os
 
 from config import Settings
 from forex_ai.screener.runner import screen_pairs
@@ -22,7 +23,8 @@ st.set_page_config(page_title="Forex AI Dow+Fibo", layout="wide")
 
 st.title("Screener Forex AI Dow + Fibonacci")
 
-api_url = st.text_input("API URL", value="http://localhost:8000")
+default_api = os.environ.get("API_URL", "http://localhost:8000")
+api_url = st.text_input("API URL", value=default_api)
 col_auth = st.columns(3)
 with col_auth[0]:
 	user_id = st.text_input("User ID", value="demo")
