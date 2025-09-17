@@ -26,6 +26,11 @@ PYTHONPATH=src python src/cli.py backtest --symbol EURUSD=X --start 2023-01-01 -
 PYTHONPATH=src python src/cli.py api --symbol EURUSD=X --timeframe 15m
 ```
 
+- Frontend (Streamlit):
+```bash
+PYTHONPATH=src python src/cli.py frontend
+```
+
 - Executar somente streamer/sinais em console (replay):
 ```bash
 PYTHONPATH=src python src/cli.py realtime --symbol EURUSD=X --timeframe 15m
@@ -47,6 +52,7 @@ src/
     broker/
     backtest/
     api/
+    frontend/
 ```
 
 ### Avisos

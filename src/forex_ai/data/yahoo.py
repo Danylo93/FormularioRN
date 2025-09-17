@@ -22,7 +22,7 @@ TF_TO_YF = {
 
 def download_bars(symbol: str, timeframe: str, start: str | None = None, end: str | None = None, limit: int | None = None) -> List[Bar]:
     interval = TF_TO_YF[timeframe]
-    df = yf.download(symbol, interval=interval, start=start, end=end, progress=False)
+    df = yf.download(symbol, interval=interval, start=start, end=end, progress=False, auto_adjust=True)
     df = df.rename(columns={"Open": "open", "High": "high", "Low": "low", "Close": "close", "Volume": "volume"})
     df = df.dropna()
     if limit is not None:

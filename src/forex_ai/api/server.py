@@ -11,6 +11,7 @@ from config import Settings
 from ..data.streamer import ReplayStreamer
 from ..signals.engine import build_default_engine
 from ..broker.paper import PaperBroker
+from ..screener.runner import screen_pairs
 
 
 class SignalOut(BaseModel):
@@ -58,6 +59,11 @@ def make_app(settings: Settings) -> FastAPI:
                 payload["order"] = order.as_dict()
             await ws.send_json(payload)
             broker.on_bar(bar)
+
+    @app.get("/screener")
+    def screener():
+        opps = screen_pairs(timeframe=settings.timeframe)
+        return [op.__dict__ for op in opps]
 
     return app
 

@@ -6,8 +6,9 @@ from typing import Deque, List, Optional
 
 from config import Settings
 from ..data.types import Bar, Signal
-from ..features.indicators import detect_pivots, determine_dow_trend, fibonacci_targets
+from ..features.indicators import detect_pivots, determine_dow_trend, fibonacci_targets, compute_sma200_ok
 from ..model.online import OnlineModel
+from ..news.filter import NewsFilter
 
 
 @dataclass
@@ -15,6 +16,7 @@ class SignalsEngine:
     settings: Settings
     window: Deque[Bar]
     model: OnlineModel
+    news_filter: NewsFilter | None = None
 
     def on_bar(self, bar: Bar) -> Optional[Signal]:
         self.window.append(bar)
@@ -46,6 +48,15 @@ class SignalsEngine:
 
         if side is None:
             return None
+
+        # Filtro SMA200
+        if not compute_sma200_ok(bars, side):
+            return None
+
+        # Filtro de notícias: não operar próximo de eventos high
+        if self.news_filter is not None:
+            if not self.news_filter.is_quiet(bar.symbol, bar.end_time, window_minutes=30):
+                return None
 
         # Stop técnico: último pivot oposto
         stop: Optional[float] = None

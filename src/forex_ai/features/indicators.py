@@ -76,3 +76,14 @@ def fibonacci_targets(entry: float, stop: float, side: str) -> Tuple[float, floa
     else:
         return entry - ext1 * risk, entry - ext2 * risk
 
+
+def compute_sma200_ok(bars: List[Bar], side: str) -> bool:
+    closes = [b.close for b in bars]
+    ma = sma(closes, 200)
+    if ma is None:
+        return False
+    price = closes[-1]
+    if side == "long":
+        return price > ma
+    return price < ma
+
