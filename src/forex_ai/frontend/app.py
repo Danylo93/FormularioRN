@@ -6,6 +6,7 @@ from typing import List
 
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 from config import Settings
 from ..screener.runner import screen_pairs
@@ -20,7 +21,9 @@ st.set_page_config(page_title="Forex AI Dow+Fibo", layout="wide")
 st.title("Screener Forex AI Dow + Fibonacci")
 
 timeframe = st.selectbox("Timeframe", ["5m", "15m"], index=1)
-lookback = st.slider("Barras de histórico", min_value=200, max_value=2000, value=600, step=50)
+lookback = st.slider("Barras de histórico", min_value=200, max_value=2000, value=800, step=50)
+rr_min = st.slider("RR mínimo (TP1/Risco)", min_value=0.5, max_value=3.0, value=1.2, step=0.1)
+align = st.checkbox("Alinhar M5 e M15", value=True)
 news_csv = st.text_input("CSV de notícias (opcional)")
 
 col1, col2 = st.columns([1, 3])
@@ -34,8 +37,15 @@ with col1:
                 nf = NewsFilter(events)
             except Exception as e:
                 st.warning(f"Falha ao carregar CSV de notícias: {e}")
-        opps = screen_pairs(timeframe="15m" if timeframe == "15m" else "5m", lookback_bars=lookback, news_filter=nf)
-        df = pd.DataFrame([o.__dict__ for o in opps[:10]])
+        opps = screen_pairs(
+            timeframe="15m" if timeframe == "15m" else "5m",
+            lookback_bars=lookback,
+            news_filter=nf,
+            rr_min=rr_min,
+            align_m5_m15=align,
+            top_n=20,
+        )
+        df = pd.DataFrame([o.__dict__ for o in opps])
         st.session_state["opps_df"] = df
     if "opps_df" in st.session_state:
         st.dataframe(st.session_state["opps_df"])
@@ -57,7 +67,8 @@ with col2:
                 "close": closes,
                 "sma200": ma200,
             })
-            st.line_chart(df.set_index("time"))
+            fig = px.line(df, x="time", y=["close", "sma200"], title=f"{symbol} - {timeframe.upper()} Close & SMA200")
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("Histórico insuficiente para SMA200.")
 

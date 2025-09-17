@@ -5,6 +5,7 @@ from dataclasses import asdict
 from typing import Optional
 
 from fastapi import FastAPI, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from config import Settings
@@ -31,6 +32,14 @@ def make_app(settings: Settings) -> FastAPI:
     engine = build_default_engine(settings)
     broker = PaperBroker(settings)
     streamer = ReplayStreamer(settings)
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"]
+    )
 
     @app.get("/health")
     def health():
@@ -61,8 +70,9 @@ def make_app(settings: Settings) -> FastAPI:
             broker.on_bar(bar)
 
     @app.get("/screener")
-    def screener():
-        opps = screen_pairs(timeframe=settings.timeframe)
+    def screener(timeframe: str | None = None, rr_min: float = 1.2, align: bool = True, top_n: int = 20):
+        tf = timeframe or settings.timeframe
+        opps = screen_pairs(timeframe=tf, rr_min=rr_min, align_m5_m15=align, top_n=top_n)
         return [op.__dict__ for op in opps]
 
     return app

@@ -5,6 +5,7 @@ from typing import Iterable, List
 
 import pandas as pd
 import yfinance as yf
+from functools import lru_cache
 
 from .types import Bar
 
@@ -20,6 +21,7 @@ TF_TO_YF = {
 }
 
 
+@lru_cache(maxsize=1024)
 def download_bars(symbol: str, timeframe: str, start: str | None = None, end: str | None = None, limit: int | None = None) -> List[Bar]:
     interval = TF_TO_YF[timeframe]
     df = yf.download(symbol, interval=interval, start=start, end=end, progress=False, auto_adjust=True)
