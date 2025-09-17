@@ -17,8 +17,7 @@ pip install -r requirements.txt
 ### Uso Rápido
 
 - Backtest com dados do Yahoo (replay):
-```bash
-PYTHONPATH=src python src/cli.py backtest --symbol EURUSD=X --start 2023-01-01 --end 2023-03-01 --timeframe 15m
+```bash PYTHONPATH=src python src/cli.py backtest --symbol EURUSD=X --start 2023-01-01 --end 2023-03-01 --timeframe 15m
 ```
 
 - Executar API (REST/WebSocket) com streamer em replay:
