@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
-from ..data.yahoo import download_bars
+from forex_ai.data.yahoo import download_bars
 
 
 PAIRS = [

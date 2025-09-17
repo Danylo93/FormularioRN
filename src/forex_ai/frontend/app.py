@@ -10,12 +10,12 @@ import plotly.express as px
 import requests
 
 from config import Settings
-from ..screener.runner import screen_pairs
-from ..news.source import load_news_csv
-from ..news.filter import NewsFilter
-from ..data.yahoo import download_bars
-from ..features.indicators import sma, detect_pivots
-from .dashboards import trend_heatmap, correlation_matrix
+from forex_ai.screener.runner import screen_pairs
+from forex_ai.news.source import load_news_csv
+from forex_ai.news.filter import NewsFilter
+from forex_ai.data.yahoo import download_bars
+from forex_ai.features.indicators import sma, detect_pivots
+from forex_ai.frontend.dashboards import trend_heatmap, correlation_matrix
 
 
 st.set_page_config(page_title="Forex AI Dow+Fibo", layout="wide")
